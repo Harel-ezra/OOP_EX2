@@ -1,6 +1,11 @@
 package ex2.api;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class DWGrpah_Algo implements dw_graph_algorithms{
     private directed_weighted_graph graph;
@@ -83,6 +88,19 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
 
     @Override
     public boolean save(String file) {
+        Gson g=new GsonBuilder().setPrettyPrinting().create();
+        String json=g.toJson(graph);
+        try {
+            PrintWriter gFile=new PrintWriter(new File("graph.json"));
+            gFile.write(json);
+            gFile.close();
+
+        }
+        catch (FileNotFoundException e)
+        {
+
+        }
+
         return false;
     }
 
@@ -121,7 +139,6 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
         return hash;
     }
 
-
     private void clear()
     {
         for (node_data n:graph.getV())
@@ -150,6 +167,7 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
         private int key;
         private double w;
         private int faterKey;
+
         public Weight(int key1, double w1, int key2)
         {
             this.key=key1;
@@ -181,7 +199,7 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
         }
 
         /**
-         * Comparator for compare between the w-distance for node, used for Dijkstra algoritem on Priority Queue
+         * Comparator for compare between the w-distance for node, used for Dijkstra algorithm on Priority Queue
          */
         @Override
         public int compareTo(Weight n) {
