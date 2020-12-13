@@ -1,11 +1,10 @@
 package ex2.api;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
+import com.google.gson.*;
 
 public class DWGrpah_Algo implements dw_graph_algorithms{
     private directed_weighted_graph graph;
@@ -88,26 +87,44 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
 
     @Override
     public boolean save(String file) {
-        Gson g=new GsonBuilder().setPrettyPrinting().create();
-        String json=g.toJson(graph);
-        try {
-            PrintWriter gFile=new PrintWriter(new File("graph.json"));
-            gFile.write(json);
-            gFile.close();
 
+        try {
+            GsonBuilder gson =new GsonBuilder();
+            gson.registerTypeAdapter(DWGraph_DS.class, new DWGraph_DS.DWGraph_DSJson());
+            Gson g= gson.create();
+            PrintWriter gFile=new PrintWriter(new File(file));
+            gFile.write(g.toJson(graph));
+            gFile.close();
+            return true;
         }
         catch (FileNotFoundException e)
         {
-
+            System.out.println("can't write the graph to a file ");
+            e.printStackTrace();
         }
-
         return false;
     }
 
     @Override
     public boolean load(String file) {
+
+        try {
+            GsonBuilder builder=new GsonBuilder();
+            builder.registerTypeAdapter(directed_weighted_graph.class, new DWGraph_DS.DWGraph_DSJson());
+            Gson gson=builder.create();
+            BufferedReader gFile=new BufferedReader(new FileReader(file));
+            directed_weighted_graph g=gson.fromJson(gFile,DWGraph_DS.class);
+            init(g);
+            return true;
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("can't read the graph from the file");
+            e.printStackTrace();
+        }
         return false;
     }
+
 
     private HashMap<Integer, Weight> Dijkstra(int src) {
         Queue<Weight> queue = new PriorityQueue<Weight>();

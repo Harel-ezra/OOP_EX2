@@ -1,4 +1,4 @@
-package ex2.api.test;
+package ex2.api;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,5 +20,9 @@ class GeoLocationTest {
 
     @Test
     void distance() {
+    }
+
+    @Test
+    void testToString() {
     }
 }

@@ -1,5 +1,9 @@
 package ex2.api;
 
+import com.google.gson.*;
+import org.w3c.dom.Node;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -137,4 +141,49 @@ public class DWGraph_DS implements directed_weighted_graph
     public int getMC() {
         return MC;
     }
+
+    static class DWGraph_DSJson implements JsonSerializer<directed_weighted_graph>, JsonDeserializer<directed_weighted_graph> {
+
+        NodeData.NodeDataJson nodeJson = new NodeData.NodeDataJson();
+        EdgeData.EdgeDataJson edgeJson = new EdgeData.EdgeDataJson();
+
+        @Override
+        public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            directed_weighted_graph graph=new DWGraph_DS();
+            JsonArray nodes=jsonElement.getAsJsonObject().get("Edges").getAsJsonArray();
+            JsonArray edges=jsonElement.getAsJsonObject().get("Nodes").getAsJsonArray();
+            for(JsonElement je: nodes)
+            {
+                graph.addNode(nodeJson.deserialize(je,type,jsonDeserializationContext));
+            }
+
+            for(JsonElement je: edges)
+            {
+                int s=je.getAsJsonObject().get("src").getAsInt();
+                int d=je.getAsJsonObject().get("dest").getAsInt();
+                double w=je.getAsJsonObject().get("w").getAsDouble();
+                graph.connect(s,d,w);
+            }
+            return graph;
+        }
+
+        @Override
+        public JsonElement serialize(directed_weighted_graph graph, Type type, JsonSerializationContext jsonSerializationContext)
+        {
+            JsonObject graphJson=new JsonObject();
+            JsonArray nodes=new JsonArray();
+            JsonArray edges=new JsonArray();
+            for (node_data n: graph.getV())
+            {
+                nodes.add(nodeJson.serialize(n, type, jsonSerializationContext));
+                for (edge_data e : graph.getE(n.getKey()))
+                {
+                    edges.add(edgeJson.serialize(e,type,jsonSerializationContext));                }
+            }
+            graphJson.add("Edges",edges);
+            graphJson.add("Nodes",nodes);
+            return graphJson;
+        }
+    }
+
 }

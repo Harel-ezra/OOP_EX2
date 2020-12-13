@@ -81,7 +81,7 @@ public interface directed_weighted_graph {
 	 */
 	public int edgeSize();
 /**
- * Returns the Mode Count - for testing changes in the graph.
+ * Returns the Mode Couיnt - for testing changes in the graph.
  * @return
  */
 	public int getMC();

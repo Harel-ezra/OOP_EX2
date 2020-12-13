@@ -46,4 +46,11 @@ public class GeoLocation implements geo_location{
         }
         return -1;
     }
+
+    public String toString()
+    {
+        String s= x+","+y+","+z;
+        return s;
+    }
+
 }

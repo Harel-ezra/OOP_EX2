@@ -1,24 +1,32 @@
 package ex2.api;
 
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class NodeData implements node_data{
-    private int counter=0;
+
     private int keyId;
     private int tag=-1;
     private String info="x";
     private geo_location g;
 
-    public NodeData(int x, int y, int z)
+    public NodeData(int key,double x, double y, double z)
     {
-        this.keyId=this.counter;
-        counter++;
+        this.keyId=key;
         this.g=new GeoLocation(x,y,z);
     }
+
+    public NodeData(int key, geo_location geoL)
+    {
+        this.keyId=key;
+        this.g=new GeoLocation(geoL);
+    }
+
     public NodeData(node_data n)
     {
-        this.keyId=counter;
-        counter++;
+        this.keyId=n.getKey();
         this.tag=n.getTag();
         this.info=n.getInfo();
         this.g=new GeoLocation(n.getLocation());
@@ -63,7 +71,6 @@ public class NodeData implements node_data{
         {
             this.info=s;
         }
-
     }
 
     @Override
@@ -76,4 +83,29 @@ public class NodeData implements node_data{
         this.tag=t;
 
     }
+
+    static class NodeDataJson implements JsonDeserializer<node_data>, JsonSerializer<node_data>
+    {
+
+        @Override
+        public node_data deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            int key =jsonElement.getAsJsonObject().get("id").getAsInt();
+            String geoL=jsonElement.getAsJsonObject().get("pos").getAsString();
+            String [] arr=geoL.split(",");
+            double x=Double.parseDouble(arr[0]);
+            double y=Double.parseDouble(arr[1]);
+            double z=Double.parseDouble(arr[2]);
+            node_data n=new NodeData(key,x,y,z);
+            return n;
+        }
+
+        @Override
+        public JsonElement serialize(node_data n, Type type, JsonSerializationContext jsonSerializationContext) {
+            JsonObject nodeJson=new JsonObject();
+            nodeJson.addProperty("pos", n.getLocation().toString());
+            nodeJson.addProperty("id", n.getKey());
+            return nodeJson;
+        }
+    }
+
 }
