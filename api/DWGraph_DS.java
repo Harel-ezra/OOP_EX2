@@ -1,13 +1,11 @@
-package ex2.api;
+package api;
 
 import com.google.gson.*;
-import org.w3c.dom.Node;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 
 public class DWGraph_DS implements directed_weighted_graph
 {

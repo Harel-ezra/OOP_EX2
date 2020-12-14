@@ -1,4 +1,4 @@
-package ex2.api;
+package api;
 
 import java.util.Collection;
 import java.util.HashMap;

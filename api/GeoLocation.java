@@ -1,4 +1,4 @@
-package ex2.api;
+package api;
 
 public class GeoLocation implements geo_location{
 

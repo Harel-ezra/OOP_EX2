@@ -1,9 +1,8 @@
-package ex2.api;
+package api;
 
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 public class NodeData implements node_data{
 

@@ -1,9 +1,6 @@
-package ex2.api;
+package api;
 
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
