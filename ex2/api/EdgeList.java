@@ -17,7 +17,6 @@ public class EdgeList {
 
     /**
      * copy constructor
-     *
      * @param l
      */
     public EdgeList(EdgeList l) {

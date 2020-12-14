@@ -62,6 +62,23 @@ public class EdgeData implements edge_data {
         this.tag=t;
     }
 
+    /**
+     * methode to equals between 2 nodes.
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() == getClass() && o != null) {
+            edge_data n = (edge_data) o;
+            if (this.s == n.getSrc() && this.d==n.getDest() && this.w== n.getWeight() &&
+                    this.info.equals(n.getInfo()) && this.tag == n.getTag()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static class EdgeDataJson implements JsonDeserializer<edge_data>, JsonSerializer<edge_data>
     {
 

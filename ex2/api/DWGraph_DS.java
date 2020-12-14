@@ -7,24 +7,28 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 public class DWGraph_DS implements directed_weighted_graph
 {
     private HashMap<Integer,node_data> graph;
     private HashMap<Integer,EdgeList > ni;
-    private int edgeSize;
-    private int MC;
+    private HashMap<Integer, Collection<Integer>> destSet;
+    private int edgeSize=0;
+    private int MC=0;
 
     public DWGraph_DS()
     {
         graph=new HashMap<Integer,node_data>();
         ni=new HashMap<Integer,EdgeList>();
+        destSet=new HashMap<Integer,Collection<Integer>>();
     }
 
     public DWGraph_DS(directed_weighted_graph g)
     {
         graph = new HashMap<Integer, node_data>();
         ni = new HashMap<Integer, EdgeList>();
+        destSet=new HashMap<Integer,Collection<Integer>>();
         for (node_data n : g.getV()) {
 
             addNode(new NodeData(n));
@@ -47,7 +51,7 @@ public class DWGraph_DS implements directed_weighted_graph
 
     @Override
     public edge_data getEdge(int src, int dest) {
-        if(graph.containsKey(src) && graph.containsKey(dest))
+        if(graph.containsKey(src) && graph.containsKey(dest) && src!=dest)
         {
             return ni.get(src).getE(dest);
         }
@@ -60,6 +64,7 @@ public class DWGraph_DS implements directed_weighted_graph
         {
             graph.put(n.getKey(),n);
             ni.put(n.getKey(),new EdgeList());
+            destSet.put(n.getKey(),new ArrayList<Integer>());
             MC++;
         }
     }
@@ -68,11 +73,15 @@ public class DWGraph_DS implements directed_weighted_graph
     public void connect(int src, int dest, double w) {
         if(graph.containsKey(src) && graph.containsKey(dest))
         {
-            if (w>0)
+            if ((w>0) && (src!=dest))
             {
+                if(!ni.get(src).hasE(dest))
+                {
+                    edgeSize++;
+                }
                 edge_data e = new EdgeData(src, dest, w);
                 ni.get(src).addNi(e);
-                edgeSize++;
+                destSet.get(dest).add(src);
                 MC++;
             }
         }
@@ -97,14 +106,19 @@ public class DWGraph_DS implements directed_weighted_graph
     public node_data removeNode(int key) {
         if(graph.containsKey(key))
         {
-            for(node_data n:getV())
+            //delete all edge that key is  src
+            for(edge_data e : getE(key))
             {
-                if(ni.get(n).hasE(key))
-                {
-                    ni.get(n).removeE(key);
+                    destSet.get(e.getDest()).remove(key);
                     edgeSize--;
                     MC++;
-                }
+            }
+            //delete all edge that key is dest
+            for(Integer e : destSet.get(key))
+            {
+                ni.get(e).removeE(key);
+                edgeSize--;
+                MC++;
             }
             node_data n=graph.remove(key);
             MC++;
@@ -120,6 +134,7 @@ public class DWGraph_DS implements directed_weighted_graph
             if(ni.get(src).hasE(dest))
             {
                 ni.get(src).removeE(dest);
+                destSet.get(dest).remove(src);
                 edgeSize--;
                 MC++;
             }
@@ -142,6 +157,50 @@ public class DWGraph_DS implements directed_weighted_graph
         return MC;
     }
 
+    /**
+     * methode for equals between 2 graph
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != getClass())
+            return false;
+        if (this == null && o == null) {
+            return true;
+        }
+        directed_weighted_graph g = (directed_weighted_graph) o;
+        if (this != null && g != null) {
+            Collection<node_data> col1 = this.getV();
+            Collection<node_data> col2 = g.getV();
+            if (col1.size() == col2.size()) {
+                //first compare between the node at the graph
+                for (node_data n1 : col1) {
+                    if (!col2.contains(n1))
+                        return false;
+                }
+                // second compare between the neighbor for any node at the graph and their distance
+                for (node_data n1 : col1) {
+                    Collection<edge_data> col1Ni = this.getE(n1.getKey());
+                    Collection<edge_data> col2Ni = g.getE(n1.getKey());
+                    if (col1Ni.size() != col2Ni.size())
+                        return false;
+                    for (edge_data n1Ni : col1Ni) {
+                        if (!col2Ni.contains(n1Ni)) {
+                            return false;
+                        }
+                        if (this.getEdge(n1.getKey(), n1Ni.getSrc()) != g.getEdge(n1.getKey(), n1Ni.getSrc())) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     static class DWGraph_DSJson implements JsonSerializer<directed_weighted_graph>, JsonDeserializer<directed_weighted_graph> {
 
         NodeData.NodeDataJson nodeJson = new NodeData.NodeDataJson();
@@ -150,8 +209,8 @@ public class DWGraph_DS implements directed_weighted_graph
         @Override
         public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             directed_weighted_graph graph=new DWGraph_DS();
-            JsonArray nodes=jsonElement.getAsJsonObject().get("Edges").getAsJsonArray();
-            JsonArray edges=jsonElement.getAsJsonObject().get("Nodes").getAsJsonArray();
+            JsonArray nodes=jsonElement.getAsJsonObject().get("Nodes").getAsJsonArray();
+            JsonArray edges=jsonElement.getAsJsonObject().get("Edges").getAsJsonArray();
             for(JsonElement je: nodes)
             {
                 graph.addNode(nodeJson.deserialize(je,type,jsonDeserializationContext));

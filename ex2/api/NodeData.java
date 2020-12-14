@@ -84,6 +84,22 @@ public class NodeData implements node_data{
 
     }
 
+    /**
+     * methode to equals between 2 nodes.
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() == getClass() && o != null) {
+            node_data n = (node_data) o;
+            if (this.keyId == n.getKey() && this.info.equals(n.getInfo()) && this.tag == n.getTag()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static class NodeDataJson implements JsonDeserializer<node_data>, JsonSerializer<node_data>
     {
 

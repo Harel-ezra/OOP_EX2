@@ -1,10 +1,10 @@
 package ex2.api;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import com.google.gson.*;
+import java.io.*;
+import java.util.*;
 
 public class DWGrpah_Algo implements dw_graph_algorithms{
     private directed_weighted_graph graph;
@@ -58,10 +58,15 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
     @Override
     public double shortestPathDist(int src, int dest) {
         if (graph.getNode(src) != null && graph.getNode(dest) != null) {
+            if(src==dest)
+                return 0;
             HashMap<Integer, Weight> hash = Dijkstra(src);
-            double path = hash.get(dest).getW();
-            clear();
-            return path;
+            if(hash.get(dest)!=null)
+            {
+                double path = hash.get(dest).getW();
+                clear();
+                return path;
+            }
         }
         return -1;
     }
@@ -72,17 +77,19 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
         List<node_data> path = new LinkedList<node_data>();
         if (graph.getNode(src) != null && graph.getNode(dest) != null) {
             HashMap<Integer, Weight> tempH = Dijkstra(src);
-            int i = dest;
-            path.add(0, graph.getNode(dest));
-            while (i != src) {
-                Weight k = tempH.get(i); // get the father of the currently node
-                path.add(0, graph.getNode(k.faterKey));
-                i = k.getFaterKey();
+            if((tempH.get(dest)!=null)|| src==dest)
+            {
+                int i = dest;
+                path.add(0, graph.getNode(dest));
+                while (i != src) {
+                    Weight k = tempH.get(i); // get the father of the currently node
+                    path.add(0, graph.getNode(k.faterKey));
+                    i = k.getFaterKey();
+                }
             }
             clear();
         }
         return path;
-
     }
 
     @Override
@@ -110,7 +117,7 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
 
         try {
             GsonBuilder builder=new GsonBuilder();
-            builder.registerTypeAdapter(directed_weighted_graph.class, new DWGraph_DS.DWGraph_DSJson());
+            builder.registerTypeAdapter(DWGraph_DS.class, new DWGraph_DS.DWGraph_DSJson());
             Gson gson=builder.create();
             BufferedReader gFile=new BufferedReader(new FileReader(file));
             directed_weighted_graph g=gson.fromJson(gFile,DWGraph_DS.class);
@@ -135,14 +142,14 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
 
         while (!queue.isEmpty()) {
             Weight n = queue.remove();
-            if(graph.getNode(n.getKey()).equals("x"))
+            if(graph.getNode(n.getKey()).getInfo().equals("x"))
             {
                 for (edge_data i : graph.getE(n.getKey()))
                 {
                     if (graph.getNode(i.getDest()).getInfo().equals("x"))
                     {
                         double weight = n.getW() + i.getWeight();
-                        if (i.getWeight() < 0 || weight < i.getWeight())
+                        if((hash.get(i.getDest())==null)||(hash.get(i.getDest()).getW()>weight))
                         {
                             Weight e=new Weight(i.getDest(),weight, n.key);
                             queue.add(e);
