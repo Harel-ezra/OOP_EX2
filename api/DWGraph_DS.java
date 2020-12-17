@@ -199,7 +199,7 @@ public class DWGraph_DS implements directed_weighted_graph
         return false;
     }
 
-    static class DWGraph_DSJson implements JsonSerializer<directed_weighted_graph>, JsonDeserializer<directed_weighted_graph> {
+    public static class DWGraph_DSJson implements JsonSerializer<directed_weighted_graph>, JsonDeserializer<directed_weighted_graph> {
 
         NodeData.NodeDataJson nodeJson = new NodeData.NodeDataJson();
         EdgeData.EdgeDataJson edgeJson = new EdgeData.EdgeDataJson();

@@ -4,19 +4,20 @@ import gameClient.util.Point3D;
 import org.json.JSONObject;
 
 public class CL_Pokemon {
-	private edge_data _edge;
-	private double _value;
-	private int _type;
-	private Point3D _pos;
-	private double min_dist;
-	private int min_ro;
+	private edge_data pokmenEdge;
+	private double pokmenScore;
+	private int pokmenType; // up or down
+	private Point3D pokmenPosition;
+	private double min_dist;  //????
+	private int min_ro;//????
+	private CL_Agent eatAgent=null;
 	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
-		_type = t;
+		pokmenType = t;
 	//	_speed = s;
-		_value = v;
+		pokmenScore = v;
 		set_edge(e);
-		_pos = p;
+		pokmenPosition = p;
 		min_dist = -1;
 		min_ro = -1;
 	}
@@ -32,27 +33,37 @@ public class CL_Pokemon {
 		}
 		return ans;
 	}
-	public String toString() {return "F:{v="+_value+", t="+_type+"}";}
+	public String toString()
+	{
+		return "F:{v="+ pokmenScore +", t="+ pokmenType +"}";
+	}
 	public edge_data get_edge() {
-		return _edge;
+		return pokmenEdge;
 	}
 
-	public void set_edge(edge_data _edge) {
-		this._edge = _edge;
+	public void set_edge(edge_data e) {
+		this.pokmenEdge = e;
 	}
 
 	public Point3D getLocation() {
-		return _pos;
+		return pokmenPosition;
 	}
-	public int getType() {return _type;}
+	public int getType()
+	{
+		return pokmenType;
+	}
 //	public double getSpeed() {return _speed;}
-	public double getValue() {return _value;}
+
+	public double getScore() {
+		return pokmenScore;
+	}
 
 	public double getMin_dist() {
 		return min_dist;
 	}
 
 	public void setMin_dist(double mid_dist) {
+
 		this.min_dist = mid_dist;
 	}
 
@@ -63,4 +74,15 @@ public class CL_Pokemon {
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
 	}
+
+	public CL_Agent getEatAgent()
+	{
+		return this.eatAgent;
+	}
+
+	public void setEatAgent(CL_Agent agent)
+	{
+		this.eatAgent=agent;
+	}
+
 }

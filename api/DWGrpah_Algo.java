@@ -75,7 +75,8 @@ public class DWGrpah_Algo implements dw_graph_algorithms{
     @Override
     public List<node_data> shortestPath(int src, int dest) {
         List<node_data> path = new LinkedList<node_data>();
-        if (graph.getNode(src) != null && graph.getNode(dest) != null) {
+        if (graph.getNode(src) != null && graph.getNode(dest) != null)
+        {
             HashMap<Integer, Weight> tempH = Dijkstra(src);
             if((tempH.get(dest)!=null)|| src==dest)
             {
