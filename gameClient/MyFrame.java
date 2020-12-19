@@ -22,15 +22,15 @@ import java.util.List;
  *
  */
 public class MyFrame extends JFrame{
-	private int _ind;
-	private Arena _ar;
+	private int ind;
+	private Arena arena;
 	private Range2Range _w2f;
 	MyFrame(String a) {
 		super(a);
 		int _ind = 0;
 	}
 	public void update(Arena ar) {
-		this._ar = ar;
+		this.arena = ar;
 		updateFrame();
 	}
 
@@ -38,7 +38,7 @@ public class MyFrame extends JFrame{
 		Range rx = new Range(20,this.getWidth()-20);
 		Range ry = new Range(this.getHeight()-10,150);
 		Range2D frame = new Range2D(rx,ry);
-		directed_weighted_graph g = _ar.getGraph();
+		directed_weighted_graph g = arena.getGraph();
 		_w2f = Arena.w2f(g,frame);
 	}
 	public void paint(Graphics g) {
@@ -53,7 +53,7 @@ public class MyFrame extends JFrame{
 		
 	}
 	private void drawInfo(Graphics g) {
-		List<String> str = _ar.get_info();
+		List<String> str = arena.get_info();
 		String dt = "none";
 		for(int i=0;i<str.size();i++) {
 			g.drawString(str.get(i)+" dt: "+dt,100,60+i*20);
@@ -61,7 +61,7 @@ public class MyFrame extends JFrame{
 		
 	}
 	private void drawGraph(Graphics g) {
-		directed_weighted_graph gg = _ar.getGraph();
+		directed_weighted_graph gg = arena.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
 		while(iter.hasNext()) {
 			node_data n = iter.next();
@@ -76,7 +76,7 @@ public class MyFrame extends JFrame{
 		}
 	}
 	private void drawPokemons(Graphics g) {
-		List<CL_Pokemon> fs = _ar.getPokemons();
+		List<CL_Pokemon> fs = arena.getPokemons();
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
 		
@@ -98,7 +98,7 @@ public class MyFrame extends JFrame{
 		}
 	}
 	private void drawAgants(Graphics g) {
-		List<CL_Agent> rs = _ar.getAgents();
+		List<CL_Agent> rs = arena.getAgents();
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
 		g.setColor(Color.red);
 		int i=0;
@@ -120,7 +120,7 @@ public class MyFrame extends JFrame{
 		g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
 	}
 	private void drawEdge(edge_data e, Graphics g) {
-		directed_weighted_graph gg = _ar.getGraph();
+		directed_weighted_graph gg = arena.getGraph();
 		geo_location s = gg.getNode(e.getSrc()).getLocation();
 		geo_location d = gg.getNode(e.getDest()).getLocation();
 		geo_location s0 = this._w2f.world2frame(s);

@@ -3,7 +3,7 @@ import api.edge_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
-public class CL_Pokemon {
+public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	private edge_data pokmenEdge;
 	private double pokmenScore;
 	private int pokmenType; // up or down
@@ -11,10 +11,9 @@ public class CL_Pokemon {
 	private double min_dist;  //????
 	private int min_ro;//????
 	private CL_Agent eatAgent=null;
-	
+
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		pokmenType = t;
-	//	_speed = s;
 		pokmenScore = v;
 		set_edge(e);
 		pokmenPosition = p;
@@ -85,4 +84,13 @@ public class CL_Pokemon {
 		this.eatAgent=agent;
 	}
 
+	@Override
+	public int compareTo( CL_Pokemon p) {
+		if(this.getScore()<p.getScore())
+			return-1;
+		else
+		if(this.getScore()==p.getScore())
+			return 0;
+		return 1;
+	}
 }
